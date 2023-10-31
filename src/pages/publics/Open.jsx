@@ -11,7 +11,7 @@ const Open = () => {
           <SidebarLeft />
         </div>
         <div className="flex-auto overflow-hidden">
-          <div className="h-[70px] px-[59px]   flex items-center mb-[55px]">
+          <div className="h-[70px] px-[59px]   flex items-center ">
             <Header></Header>
           </div>
           <Outlet />

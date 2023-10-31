@@ -3,10 +3,13 @@ import React, { memo } from "react";
 import List from "./List";
 import moment from "moment/moment";
 import icons from "../untils/icons";
+import { useSelector } from "react-redux";
 
 const { PiDotOutlineFill } = icons;
 
-const Lists = ({ songs, totalDuration }) => {
+const Lists = ({ totalDuration }) => {
+  const { songs } = useSelector((state) => state.music);
+
   return (
     <div className="w-full flex flex-col text-xs text-gray-600">
       <div className="uppercase flex  items-center  text-sm font-semibold p-3 ">

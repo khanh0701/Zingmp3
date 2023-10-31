@@ -5,18 +5,22 @@ import moment from "moment/moment";
 import icons from "../../untils/icons";
 import { Lists } from "../../components";
 import { Scrollbars } from "react-custom-scrollbars-2";
+import { useDispatch } from "react-redux";
+import * as actions from "../../store/actions";
 
 const { BsFillPlayFill, BsThreeDots, CiHeart } = icons;
 
 const PlayList = () => {
   const { title, pid } = useParams();
   const [playListData, setPlayListData] = useState({});
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchDetailPlayList = async () => {
       const response = await apis.apiGetDetailPlayList(pid);
       if (response?.data.err === 0) {
         setPlayListData(response?.data?.data);
+        dispatch(actions.setPlayList(response.data?.data?.song?.items));
       }
     };
     fetchDetailPlayList();
@@ -80,7 +84,7 @@ const PlayList = () => {
           </span>
 
           <Lists
-            songs={playListData?.song?.items}
+            // songs={playListData?.song?.items}
             totalDuration={playListData?.song?.totalDuration}
           />
         </div>
