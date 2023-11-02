@@ -8,7 +8,6 @@ import moment from "moment";
 import { toast } from "react-toastify";
 
 const {
-  AiFillHeart,
   AiOutlineHeart,
   BsThreeDots,
   CiRepeat,
@@ -17,6 +16,7 @@ const {
   BiSkipPrevious,
   PiShuffleLight,
   BsPauseCircle,
+  PiRepeatOnceLight,
 } = icons;
 var intervalId;
 const Player = () => {
@@ -28,6 +28,7 @@ const Player = () => {
   const trackRef = useRef();
   const [curSeconds, setCurSeconds] = useState(0);
   const [isShuffle, setIsShuffle] = useState(false);
+  const [RepeatMode, setRepeatMode] = useState(0);
 
   useEffect(() => {
     const fetchSong = async () => {
@@ -58,7 +59,7 @@ const Player = () => {
     intervalId && clearInterval(intervalId);
     audio.pause();
     audio.load();
-    if (isPlaying) {
+    if (isPlaying && thumbRef.current) {
       audio.play();
       intervalId = setInterval(() => {
         let percent =
@@ -68,6 +69,25 @@ const Player = () => {
       }, 200);
     }
   }, [audio]);
+
+  useEffect(() => {
+    const handleEnded = () => {
+      if (isShuffle) {
+        handleShuffle();
+      } else if (RepeatMode) {
+        RepeatMode === 1 ? handleRepeatOne() : handleNextSong();
+      } else {
+        audio.pause();
+        dispatch(actions.play(false));
+      }
+    };
+
+    audio.addEventListener("ended", handleEnded);
+
+    return () => {
+      audio.removeEventListener("ended", handleEnded);
+    };
+  }, [audio, isShuffle, RepeatMode]);
 
   const handleTogglePlayMusic = () => {
     if (isPlaying) {
@@ -113,8 +133,15 @@ const Player = () => {
       dispatch(actions.play(true));
     }
   };
-  const handleShuffle = () => {};
+  const handleShuffle = () => {
+    const randomIndex = Math.round(Math.random() * (songs?.length - 1));
+    dispatch(actions.setCurSongId(songs[randomIndex].encodeId));
+    dispatch(actions.play(true));
+  };
 
+  const handleRepeatOne = () => {
+    audio.play();
+  };
   return (
     <div className="bg-main-400 px-5 h-full flex py-2">
       <div className="w-[30%] flex-auto flex items-center gap-3 ">
@@ -144,7 +171,11 @@ const Player = () => {
         <div className="flex gap-8 justify-center items-center text-gray-700 ">
           <span
             onClick={() => setIsShuffle((prev) => !prev)}
-            title="bật phát ngẫu nhiên"
+            title={`${
+              isShuffle === false
+                ? "bật phát ngẫu nhiên"
+                : "tắt phát ngẫu nhiên"
+            }`}
             className={`cursor-pointer ${isShuffle && "text-main-500"}`}
           >
             <PiShuffleLight size={20} />
@@ -171,8 +202,22 @@ const Player = () => {
           >
             <BiSkipNext size={30} />
           </span>
-          <span title="bật phát lại tất cả" className="cursor-pointer">
-            <CiRepeat size={20} />
+          <span
+            title={`${
+              RepeatMode === 0
+                ? "bật phát lại một bài"
+                : RepeatMode === 1
+                ? "bật phát lại tất cả"
+                : "tắt phát lại"
+            } `}
+            onClick={() => setRepeatMode((prev) => (prev === 2 ? 0 : prev + 1))}
+            className={`cursor-pointer ${RepeatMode && "text-main-500"}`}
+          >
+            {RepeatMode === 1 ? (
+              <PiRepeatOnceLight size={20} />
+            ) : (
+              <CiRepeat size={20} />
+            )}
           </span>
         </div>
         <div className="w-full flex items-center justify-center gap-3 text-xs">

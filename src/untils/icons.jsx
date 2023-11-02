@@ -6,6 +6,7 @@ import {
   BsPlayCircle,
   BsPauseCircle,
   BsFillPlayFill,
+  BsChevronRight,
 } from "react-icons/bs";
 import { BiSkipNext, BiSkipPrevious } from "react-icons/bi";
 import { CiSettings, CiRepeat, CiHeart } from "react-icons/ci";
@@ -17,6 +18,7 @@ import {
   PiShuffleLight,
   PiMusicNotesSimpleThin,
   PiDotOutlineFill,
+  PiRepeatOnceLight,
 } from "react-icons/pi";
 import { TfiSearch } from "react-icons/tfi";
 
@@ -43,5 +45,7 @@ const icons = {
   CiHeart,
   PiMusicNotesSimpleThin,
   PiDotOutlineFill,
+  BsChevronRight,
+  PiRepeatOnceLight,
 };
 export default icons;

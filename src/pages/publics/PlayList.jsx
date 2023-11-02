@@ -3,14 +3,16 @@ import { useParams } from "react-router-dom";
 import * as apis from "../../apis";
 import moment from "moment/moment";
 import icons from "../../untils/icons";
-import { Lists } from "../../components";
+import { Lists, AudioLoading } from "../../components";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../store/actions";
 
 const { BsFillPlayFill, BsThreeDots, CiHeart } = icons;
 
 const PlayList = () => {
+  const { curSongId, isPlaying, songs } = useSelector((state) => state.music);
+
   const { title, pid } = useParams();
   const [playListData, setPlayListData] = useState({});
   const dispatch = useDispatch();
@@ -29,11 +31,18 @@ const PlayList = () => {
   return (
     <div className="flex px-[59px] gap-[30px] w-full h-full">
       <div className="flex-none w-1/4 flex flex-col items-center">
-        <img
-          src={playListData?.thumbnailM}
-          alt="thumbnailM"
-          className="w-full object-contain rounded-lg"
-        />
+        <div className="w-full relative overflow-hidden">
+          <img
+            src={playListData?.thumbnailM}
+            alt="thumbnailM"
+            className="w-full object-contain rounded-lg"
+          />
+          <div className="absolute top-0 bottom-0 left-0 right-0 hover:bg-overlay-30 flex items-center justify-center text-white">
+            <span className="p-3 border border-white rounded-full">
+              {isPlaying ? <AudioLoading /> : <BsFillPlayFill size={30} />}
+            </span>
+          </div>
+        </div>
         <div className="flex flex-col items-center text-xs text-gray-600 gap-1">
           <h3 className="pt-[12px] text-xl text-gray-700 font-bold">
             {playListData?.title}
