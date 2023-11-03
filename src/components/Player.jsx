@@ -6,17 +6,24 @@ import icons from "../untils/icons";
 import * as actions from "../store/actions";
 import moment from "moment";
 import { toast } from "react-toastify";
+import { LoadingSong } from "../components";
 
 const {
   AiOutlineHeart,
   BsThreeDots,
   CiRepeat,
-  BsPlayCircle,
   BiSkipNext,
   BiSkipPrevious,
   PiShuffleLight,
-  BsPauseCircle,
+  BsFillPlayFill,
+  BsPauseFill,
   PiRepeatOnceLight,
+  SlVolume2,
+  BsMusicNoteList,
+  VscChromeRestore,
+  PiMicrophoneStage,
+  PiVideo,
+  SlVolumeOff,
 } = icons;
 var intervalId;
 const Player = () => {
@@ -29,13 +36,17 @@ const Player = () => {
   const [curSeconds, setCurSeconds] = useState(0);
   const [isShuffle, setIsShuffle] = useState(false);
   const [RepeatMode, setRepeatMode] = useState(0);
+  const [isLoadedSrc, setIsLoadedSrc] = useState(true);
+  const [volume, setVolume] = useState(100);
 
   useEffect(() => {
     const fetchSong = async () => {
+      setIsLoadedSrc(false);
       const [res1, res2] = await Promise.all([
         apis.apiGetDetailSong(curSongId),
         apis.apiGetSong(curSongId),
       ]);
+      setIsLoadedSrc(true);
 
       if (res1.data.err === 0) {
         setSongInFo(res1.data.data);
@@ -88,6 +99,10 @@ const Player = () => {
       audio.removeEventListener("ended", handleEnded);
     };
   }, [audio, isShuffle, RepeatMode]);
+
+  useEffect(() => {
+    audio.volume = volume / 100;
+  }, [volume]);
 
   const handleTogglePlayMusic = () => {
     if (isPlaying) {
@@ -142,6 +157,7 @@ const Player = () => {
   const handleRepeatOne = () => {
     audio.play();
   };
+
   return (
     <div className="bg-main-400 px-5 h-full flex py-2">
       <div className="w-[30%] flex-auto flex items-center gap-3 ">
@@ -188,12 +204,14 @@ const Player = () => {
           </span>
           <span
             onClick={handleTogglePlayMusic}
-            className="hover:text-main-500 cursor-pointer"
+            className=" cursor-pointer p-1 border border-gray-700 rounded-full hover:text-main-500 hover:border-main-500"
           >
-            {isPlaying ? (
-              <BsPauseCircle size={36} />
+            {!isLoadedSrc ? (
+              <LoadingSong />
+            ) : isPlaying ? (
+              <BsPauseFill size={30} />
             ) : (
-              <BsPlayCircle size={36} />
+              <BsFillPlayFill size={30} />
             )}
           </span>
           <span
@@ -235,7 +253,40 @@ const Player = () => {
           <span> {moment.utc(songInFo?.duration * 1000).format("mm:ss")}</span>
         </div>
       </div>
-      <div className="w-[30%] flex-auto">3</div>
+      <div className="w-[30%] flex-auto flex items-center justify-end gap-4">
+        <div className="flex justify-end gap-4 pr-4 border-r-2 border-gray-500 ">
+          <span>
+            <PiVideo size={18} />
+          </span>
+          <span>
+            <PiMicrophoneStage />
+          </span>
+          <span>
+            <VscChromeRestore />
+          </span>
+          <span
+            title="volume"
+            onClick={() => setVolume((prev) => (+prev === 0 ? 70 : 0))}
+          >
+            {+volume !== 0 ? <SlVolume2 /> : <SlVolumeOff />}
+          </span>
+          <input
+            type="range"
+            step={1}
+            min={0}
+            max={100}
+            value={volume}
+            onChange={(e) => setVolume(e.target.value)}
+          />
+        </div>
+
+        <span
+          title="danh sách phát"
+          className=" p-1 hover:bg-main-500 hover:rounded-sm hover:text-white"
+        >
+          <BsMusicNoteList s />
+        </span>
+      </div>
     </div>
   );
 };

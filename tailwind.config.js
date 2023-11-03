@@ -10,6 +10,7 @@ export default {
         "main-400": "#C0D8D8",
         "main-500": "#0E8080",
         "overlay-30": "rgba(0,0,0,0.3)",
+        "overlay-70": "rgba(0,0,0,0.7)",
       },
       colors: {
         "main-100": "#E7ECEC",
