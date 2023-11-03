@@ -11,15 +11,16 @@ import * as actions from "../../store/actions";
 const { BsFillPlayFill, BsThreeDots, CiHeart } = icons;
 
 const PlayList = () => {
-  const { curSongId, isPlaying, songs } = useSelector((state) => state.music);
-
-  const { title, pid } = useParams();
+  const { isPlaying } = useSelector((state) => state.music);
+  const { pid } = useParams();
   const [playListData, setPlayListData] = useState({});
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchDetailPlayList = async () => {
+      dispatch(actions.loading(true));
       const response = await apis.apiGetDetailPlayList(pid);
+      dispatch(actions.loading(false));
       if (response?.data.err === 0) {
         setPlayListData(response?.data?.data);
         dispatch(actions.setPlayList(response.data?.data?.song?.items));

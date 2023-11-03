@@ -3,6 +3,11 @@ import actionTypes from "../actions/actionTypes";
 const initState = {
   banner: [],
   chill: {},
+  loveLife: {},
+  remix: {},
+  mood: {},
+  artist: {},
+  isLoading: false,
 };
 
 const appReducer = (state = initState, action) => {
@@ -16,6 +21,23 @@ const appReducer = (state = initState, action) => {
         chill:
           action.homeData?.find((item) => item.sectionId === "hEditorTheme") ||
           {},
+        loveLife:
+          action.homeData?.find((item) => item.sectionId === "hEditorTheme2") ||
+          {},
+        remix:
+          action.homeData?.find((item) => item.sectionId === "hEditorTheme3") ||
+          {},
+        mood:
+          action.homeData?.find((item) => item.sectionId === "hEditorTheme4") ||
+          {},
+        artist:
+          action.homeData?.find((item) => item.sectionId === "hArtistTheme") ||
+          {},
+      };
+    case actionTypes.LOADING:
+      return {
+        ...state,
+        isLoading: action.flag,
       };
 
     default:
